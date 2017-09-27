@@ -15,17 +15,22 @@ function Disable-Pod{
         @{N='GeId'; E={$_.GlobalEntitlementData.GlobalEntitlement}},
         @{N='PoolType';E={'Desktop'}}
     )
-    $DesktopPools = Get-DesktopPool -Server $Server | Select $DesktopSelect
-
     $ApplicationSelect = @(
         @{N='Name';E={$_.Data.Name}},
         @{N='GeId'; E={$_.Data.GlobalApplicationEntitlement}},
         @{N='PoolType';E={'Application'}}
     )
-    $ApplicationPools = get-ApplicationPool -Server $Server | Select $ApplicationSelect
-    $Pools = @($DesktopPools + $ApplicationPools)
 
-    $Pools | Export-Clixml -Path $EntitlementBackupFile 
+    Try {
+        $DesktopPools = Get-DesktopPool -Server $Server -ErrorAction Stop | Select $DesktopSelect -ErrorAction Stop
+        $ApplicationPools = get-ApplicationPool -Server $Server -ErrorAction Stop | Select $ApplicationSelect -ErrorAction Stop
+        $Pools = @($DesktopPools + $ApplicationPools)
+        $Pools | Export-Clixml -Path $EntitlementBackupFile -ErrorAction Stop
+    }
+    Catch{
+        Write-Error "Unable to Create Backup, aborting Pod Disable"
+        Throw $_
+    }
     
     If (-not $BackupOnly){
         foreach ($Pool in $Pools){

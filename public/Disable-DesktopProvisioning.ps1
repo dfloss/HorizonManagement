@@ -11,6 +11,16 @@ function Disable-DesktopProvisioning{
         [Parameter(dontshow)]
         [VMware.Hv.Services]$HvApi
     )
+    $Params = @{
+        Desktop = $Desktop
+        Key = 'automatedDesktopData.virtualCenterProvisioningSettings.enableProvisioning'
+        Value = $false
+        Server = $Server
+    }
+    Set-DesktopPool @Params
+
+
+    <#
     if (-not $HvApi){
         $HvApi = Get-HvApi -Server $Server
     }
@@ -23,4 +33,5 @@ function Disable-DesktopProvisioning{
     $Update.Value = $false
     #Return $HvApi.Desktop.Desktop_Update($DesktopId,$Update)
     Return Invoke-ViewApi -ApiPath "Desktop.Desktop_Update" -ArgumentList $DesktopId,$Update
+    #>
 }

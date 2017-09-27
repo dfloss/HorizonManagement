@@ -7,7 +7,7 @@ function Set-DesktopPool{
         [ValidateScript({$_ -in $Script:Config.DesktopProperties})]
         [String]$Key,
         [Parameter(Mandatory,ParameterSetName="Single")]
-        [String]$Value,
+        $Value,
         [Parameter(Mandatory,ParameterSetName="Multi",ValueFromPipeline)]
         [ValidateScript({$_.Keys -in $Script:Config.DesktopProperties})]
         [HashTable]$HashTable,
@@ -16,24 +16,27 @@ function Set-DesktopPool{
         [Parameter(dontshow)]
         [VMware.Hv.Services]$HvApi
     )
-    if (-not $HvApi){
-        $HvApi = Get-HvApi -Server $Server
-    }
-
-    $DesktopID = (Get-DesktopPool -Name $Desktop -HvApi $HvApi).Id
+    $DesktopID = (Get-DesktopPool -Name $Desktop -Server $Server).Id
     if ($DesktopId -like $Null){
         throw "Unable to find desktop pool called: $Desktop"
     }
 
     Switch ($PSCmdlet.ParameterSetName){
         "Single"{
-            $HashTable = @{}
-            $HashTable.Add($Key,$Value)
+            $HashTable = @{
+                $Key = $Value
+            }
         }
     }
     $Updates = New-MapEntry -HashTable $HashTable
     
     if ($PSCmdlet.ShouldProcess($Desktop, "Applying Settings: `n $HashTable `n")){
-        $HvApi.Desktop.Desktop_Update($DesktopId,$Updates)
+        #$HvApi.Desktop.Desktop_Update($DesktopId,$Updates)
+        $Params = @{
+            ApiPath = "Desktop.Desktop_Update"
+            ArgumentList = $DesktopID,$Updates
+            Server = $Server
+        }
+        Invoke-ViewApi @Params
     }
 }

@@ -1,7 +1,7 @@
 function New-MapEntry{
     [cmdletbinding()]
     param(
-        [Parameter(Mandatory)]
+        [Parameter(Mandatory,ValueFromPipeline)]
         [HashTable]$HashTable
     )
     $HashTable.GetEnumerator() | ForEach-Object{
