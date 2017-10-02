@@ -23,6 +23,8 @@ $Commands = @{
     'Remove-DesktopEntitlement' = 'Server'
     'Set-DesktopPool' = 'Server'
     'Disable-DesktopProvisioning' = 'Server'
+    'Disable-Pod' = 'Server'
+    'Enable-Pod' = 'Server'
 }
 Register-CompleterList -Commands $Commands -Completer $ServerSelectionCompleter
 <#

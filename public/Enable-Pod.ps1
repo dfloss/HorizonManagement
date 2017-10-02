@@ -7,7 +7,13 @@ function Enable-Pod{
         $EntitlementBackupFile
     )
     $hvApi = Get-HvApi -Server $Server
-    $Entries = Import-Clixml $EntitlementBackupFile
+    Try{
+        $Entries = Import-Clixml $EntitlementBackupFile -ErrorAction Stop
+    }
+    Catch{
+        Write-Error "Unable to Load EntitlementBackupFile"
+        Throw $_
+    }
 
     foreach ($Entry in $Entries){
         If ($PSCmdlet.ShouldProcess($Entry.Name, "Restoring GlobalEntitlement")){
