@@ -37,10 +37,10 @@ function Disable-Pod{
            if ($PSCmdlet.ShouldProcess($Pool.Name,"Removing GlobalEntitlement")){ 
                 Switch($Pool.PoolType){
                     "Desktop"{
-                        Remove-DesktopEntitlement -Desktop $Pool.Name
+                        Remove-DesktopEntitlement -Desktop $Pool.Name -Server $Server
                     }
                     "Application"{
-                        Remove-ApplicationEntitlement -Application $Pool.Name
+                        Remove-ApplicationEntitlement -Application $Pool.Name -Server $Server
                     }
                 }
             }
