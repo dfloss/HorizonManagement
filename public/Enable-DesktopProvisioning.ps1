@@ -13,6 +13,12 @@ function Enable-DesktopProvisioning{
         $DesktopObject = Get-DesktopPool -Name $Desktop
         $DesktopId = $DesktopObject.Id
     }
-    $Update = New-MapEntry @{'automatedDesktopData.virtualCenterProvisioningSettings.enableProvisioning' = $True}
-    Return Invoke-ViewApi -ApiPath "Desktop.Desktop_Update" -ArgumentList $DesktopId,$Update -Server $Server
+    $Params = @{
+        Desktop = $Desktop
+        Key = 'automatedDesktopData.virtualCenterProvisioningSettings.enableProvisioning'
+        Value = $true
+        Server = $Server
+    }
+    Set-DesktopPool @Params
+
 }

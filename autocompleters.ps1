@@ -64,6 +64,7 @@ $Commands = @{
     'Disable-DesktopProvisioning' = 'Desktop'
     'Enable-DesktopProvisioning' = 'Desktop'
     'Set-DesktopPool' = 'Desktop'
+    'Disable-DesktopPool' = 'Desktop'
 }
 Register-CompleterList -Commands $commands -Completer $DesktopPoolCompleter
 

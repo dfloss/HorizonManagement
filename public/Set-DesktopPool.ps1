@@ -30,7 +30,7 @@ function Set-DesktopPool{
     }
     $Updates = New-MapEntry -HashTable $HashTable
     
-    if ($PSCmdlet.ShouldProcess($Desktop, "Applying Settings: `n $HashTable `n")){
+    if ($PSCmdlet.ShouldProcess($Desktop, "Applying Settings: `n $($HashTable | Out-String) `n")){
         #$HvApi.Desktop.Desktop_Update($DesktopId,$Updates)
         $Params = @{
             ApiPath = "Desktop.Desktop_Update"

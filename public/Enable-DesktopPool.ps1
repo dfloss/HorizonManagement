@@ -1,4 +1,4 @@
-function Disable-DesktopPool{
+function Enable-DesktopPool{
     [cmdletbinding(SupportsShouldProcess,DefaultParameterSetName="Desktop")]
     param(
         [Parameter(Mandatory,ParameterSetName="Desktop")]

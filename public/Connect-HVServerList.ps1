@@ -6,14 +6,16 @@ function Connect-HvServerList{
         [Parameter(ParameterSetName="Server")]
         [string]$Server,
         [Parameter(ParameterSetName="UseExisting")]
-        [Switch]$UseExisting
+        [Switch]$UseExisting,
+        [Parameter(dontshow)]
+        $CredentialFile = $Script:Config.CredentialFile
     )
     if ($PSCmdlet.ParameterSetName -eq "ServerHash" -and $ServerHash -eq $null){
         $PSCmdlet.ParameterSetName = "ExistingConnections"
     }
 
     If ($Script:Config.CredentialFile -ne $null){
-        $Credential = Import-Clixml -Path $Script:Config.CredentialFile -ErrorAction Stop
+        $Credential = Import-Clixml -Path $CredentialFile -ErrorAction Stop
     }
     Else {
         $Credential = Get-Credential -Message "Please enter your credentials to connect to your Horizon Servers"
@@ -39,7 +41,7 @@ function Connect-HvServerList{
         "UseExisting"{
             Foreach ($ServerEntry in $global:DefaultHVServers){
                 $Connection = $ServerEntry
-                $SCript:Config.ApiList.Add($ServerEntry.Name,$Connection.ExtensionData)
+                $Script:Config.ApiList.Add($ServerEntry.Name,$Connection.ExtensionData)
             }
             Set-CurrentHvServer -Server $global:DefaultHvServers[0].Name
         }
