@@ -12,9 +12,7 @@ function Set-DesktopPool{
         [ValidateScript({$_.Keys -in $Script:Config.DesktopProperties})]
         [HashTable]$HashTable,
         [ValidateScript({$_ -in $Script:Config.ApiList.Keys})]
-        [String]$Server = $Script:Config.CurrentServer,
-        [Parameter(dontshow)]
-        [VMware.Hv.Services]$HvApi
+        [String]$Server = $Script:Config.CurrentServer
     )
     $DesktopID = (Get-DesktopPool -Name $Desktop -Server $Server).Id
     if ($DesktopId -like $Null){
