@@ -17,12 +17,14 @@ function Enable-Pod{
 
     foreach ($Entry in $Entries){
         If ($PSCmdlet.ShouldProcess($Entry.Name, "Restoring GlobalEntitlement")){
-            switch ($Entry.PoolType){
-                "Desktop"{
-                    Set-DesktopEntitlement -Desktop $Entry.Name -GeId $Entry.GeId -Server $Server
-                }
-                "Application"{
-                    Set-ApplicationEntitlement -Application $Entry.Name -GeId $Entry.GeId -Server $Server
+            if (-not $Entry.GeId -eq $null){
+                switch ($Entry.PoolType){
+                    "Desktop"{
+                        Set-DesktopEntitlement -Desktop $Entry.Name -GeId $Entry.GeId -Server $Server
+                    }
+                    "Application"{
+                        Set-ApplicationEntitlement -Application $Entry.Name -GeId $Entry.GeId -Server $Server
+                    }
                 }
             }
         }

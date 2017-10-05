@@ -34,8 +34,8 @@ function Connect-HvServerList{
             }
         }
         "Server"{
-            $Connection = Connect-HVServer -Server $Server
-            $Script:Config.ApiList.Add($Server,$Connection)
+            $Connection = Connect-HVServer -Server $Server -Credential $Credential
+            $Script:Config.ApiList.Add($Server,$Connection.ExtensionData)
             Set-CurrentHvServer -Server $Server
         }
         "UseExisting"{
