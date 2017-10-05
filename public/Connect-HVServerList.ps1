@@ -47,5 +47,4 @@ function Connect-HvServerList{
             Set-CurrentHvServer -Server $global:DefaultHvServers[0].Name
         }
     }
-    Return $Script:Config.ApiList
 }
