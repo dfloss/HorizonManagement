@@ -16,24 +16,31 @@ $ServerSelectionCompleter = {
     }
 }
 $Commands = @{
-    "Search-HV" = 'Server'
-    "Get-DesktopPool" = 'Server'
-    'Set-CurrentHVServer' = 'Server'
-    'Set-DesktopEntitlement' = 'Server'
-    'Remove-DesktopEntitlement' = 'Server'
-    'Set-DesktopPool' = 'Server'
+    'Connect-HVServerList' = 'Server'
+    'Connect-HVServerList.Tests' = 'Server'
+    'Disable-DesktopPool' = 'Server'
     'Disable-DesktopProvisioning' = 'Server'
     'Disable-Pod' = 'Server'
+    'Enable-DesktopPool' = 'Server'
+    'Enable-DesktopProvisioning' = 'Server'
     'Enable-Pod' = 'Server'
+    'Get-ApplicationPool' = 'Server'
+    'Get-DesktopPool' = 'Server'
+    'Get-GlobalApplicationEntitlement' = 'Server'
+    'Get-GlobalEntitlement' = 'Server'
+    'Get-LocalSessions' = 'Server'
+    'Remove-ApplicationEntitlement' = 'Server'
+    'Remove-DesktopEntitlement' = 'Server'
+    'Search-HV' = 'Server'
+    'Set-ApplicationEntitlement' = 'Server'
+    'Set-CurrentHVServer' = 'Server'
+    'Set-DesktopEntitlement' = 'Server'
+    'Set-DesktopPool' = 'Server'
+    'Set-DesktopPool.Tests' = 'Server'
+    'Set-PoolGlobalEntitlement' = 'Server'
 }
 Register-CompleterList -Commands $Commands -Completer $ServerSelectionCompleter
-<#
-Register-ArgumentCompleter -CommandName "Search-HV" -ParameterName 'Server' -ScriptBlock $ServerSelectionCompleter
-Register-ArgumentCompleter -CommandName "Get-DesktopPool" -ParameterName 'Server' -ScriptBlock $ServerSelectionCompleter
-Register-ArgumentCompleter -CommandName "Set-CurrentHvServer" -ParameterName 'Server' -ScriptBlock $ServerSelectionCompleter
-Register-ArgumentCompleter -CommandName "Set-DesktopEntitlement" -ParameterName 'Server' -ScriptBlock $ServerSelectionCompleter
-Register-ArgumentCompleter -CommandName "Remove-DesktopEntitlement" -ParameterName 'Server' -ScriptBlock $ServerSelectionCompleter
-#>
+
 
 $ApplicationPoolCompleter = {
     (Search-HV -QueryType ApplicationInfo).Data.Name | Sort | ForEach-Object{
@@ -46,11 +53,6 @@ $Commands = @{
     'Remove-ApplicationEntitlement' = 'Application'
 }
 Register-CompleterList -Commands $Commands -Completer $ApplicationPoolCompleter
-<#
-Register-ArgumentCompleter -CommandName 'Get-ApplicationPool' -ParameterName 'Name' -ScriptBlock $ApplicationPoolCompleter
-Register-ArgumentCompleter -CommandName 'Set-ApplicationEntitlement' -ParameterName 'Application' -ScriptBlock $ApplicationPoolCompleter
-Register-ArgumentCompleter -CommandName 'Remove-ApplicationEntitlement' -ParameterName 'Application' -ScriptBlock $ApplicationPoolCompleter
-#>
 
 $DesktopPoolCompleter = {
     (Search-HV -QueryType DesktopSummaryView).DesktopSummaryData.Name | Sort | ForEach-Object{
@@ -58,21 +60,17 @@ $DesktopPoolCompleter = {
     }
 }
 $Commands = @{
-    'Get-DesktopPool' = 'Name'
-    'Set-DesktopEntitlement' = 'Desktop'
-    'Remove-DesktopEntitlement' = 'Desktop'
-    'Disable-DesktopProvisioning' = 'Desktop'
-    'Enable-DesktopProvisioning' = 'Desktop'
-    'Set-DesktopPool' = 'Desktop'
     'Disable-DesktopPool' = 'Desktop'
+    'Disable-DesktopProvisioning' = 'Desktop'
+    'Enable-DesktopPool' = 'Desktop'
+    'Enable-DesktopProvisioning' = 'Desktop'
+    'Get-DesktopPool' = 'Name'
+    'Remove-DesktopEntitlement' = 'Desktop'
+    'Set-DesktopEntitlement' = 'Desktop'
+    'Set-DesktopPool' = 'Desktop'
 }
 Register-CompleterList -Commands $commands -Completer $DesktopPoolCompleter
 
-<#
-Register-ArgumentCompleter -CommandName 'Get-DesktopPool' -ParameterName 'Name' -ScriptBlock $DesktopPoolCompleter
-Register-ArgumentCompleter -CommandName 'Set-DesktopEntitlement' -ParameterName 'Desktop' -ScriptBlock $DesktopPoolCompleter
-Register-ArgumentCompleter -CommandName 'Remove-DesktopEntitlement' -ParameterName 'Desktop' -ScriptBlock $DesktopPoolCompleter
-#>
 $GlobalEntitlementCompleter = {
     (Search-HV -QueryType GlobalEntitlementSummaryView).Base.DisplayName | Sort | ForEach-Object{
         New-Object -TypeName 'System.Management.Automation.CompletionResult' "'$_'","$_",'ParameterValue',"$_"
@@ -88,3 +86,11 @@ $GlobalApplicationEntitlementCompleter = {
 }
 Register-ArgumentCompleter -CommandName 'Get-GlobalApplicationEntitlement' -ParameterName 'Name' -ScriptBlock $GlobalApplicationEntitlementCompleter
 Register-ArgumentCompleter -CommandName 'Set-ApplicationEntitlement' -ParameterName 'GlobalEntitlement' -ScriptBlock $GlobalApplicationEntitlementCompleter
+
+$DesktopPropertiesCompleter = {
+    $Script:Config.DesktopProperties | foreach {
+        $Preview = $_ -replace "^[a-zA-Z]+\.",""
+        New-Object -TypeName 'System.Management.Automation.CompletionResult' "'$_'","$Preview",'ParameterValue',"$_"
+    }
+}
+Register-ArgumentCompleter -CommandName 'Set-DesktopPool' -ParameterName "Key" -ScriptBlock $DesktopPropertiesCompleter
