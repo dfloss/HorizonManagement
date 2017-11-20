@@ -13,9 +13,24 @@ function Get-DesktopPool{
     if ($PSCmdlet.ParameterSetName -eq 'Server'){
         $HvApi = Get-HvApi -Server $Server
     }
+    #Select Block for DesktopPools, this puts some important information at the top level
+    #Select array is assembled with * to keep the other objects intact for backwards compatibility.
+    $Select = @('*')
+    #Setup as Key = Name and Value = Expression for more compact notation
+    $SelectHash = @{
+        'Name' = {$_.Base.Name}
+        'DisplayName' = {$_.Base.DisplayName}
+        'Enabled' = {$_.DesktopSettings.Enabled}
+        'Provisioning' = {$_.AutomatedDesktopData.VirtualCenterProvisioningSettings.EnableProvisioning}
+        'ParentVmPath' = {$_.AutomatedDesktopData.VirtualCenterNamesData.ParentVmPath}
+    }
+    $SelectHash.GetEnumerator() | ForEach-Object{
+        $Statement = @{N=$_.Key;E=$_.Value}
+        $Select+=$Statement
+    }
     $DesktopSummary = Search-HV -HvApi $hvApi -QueryType DesktopSummaryView
     if ($Name){
-        $Desktop = $DesktopSummary | Where {$_.DesktopSummaryData.Name -like $Name}
+        $Desktop = $DesktopSummary | Where {$_.DesktopSummaryData.Name -like $Name} | Select $Select
         if ($Desktop -eq $Null){
             Write-Warning "No Desktop Pool name $Name was Found"
             Return $null
@@ -28,7 +43,7 @@ function Get-DesktopPool{
     else{
         $ReturnObject = [System.Collections.Arraylist]::new()
         foreach($DesktopId in $DesktopSummary.id){
-            $Desktop = $hvApi.Desktop.Desktop_Get($DesktopId)
+            $Desktop = $hvApi.Desktop.Desktop_Get($DesktopId) | Select $Select
             $ReturnObject.add($Desktop) | Out-Null
         }
         Return $ReturnObject

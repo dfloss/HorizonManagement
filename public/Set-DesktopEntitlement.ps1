@@ -35,6 +35,7 @@ function Set-DesktopEntitlement{
     $Update.Value = $GeId
     $Update.Key = 'globalEntitlementData.globalEntitlement'
     If ($PSCmdlet.ShouldProcess($Desktop,"Adding Global Entitlement: $GlobalEntitlement")){
+        Write-Verbose "Adding GeID $GeId to PoolId: $PoolId"
         Invoke-ViewApi -ApiPath "Desktop.Desktop_Update" -ArgumentList $PoolID,$Update -Server $Server
         #Return $HvApi.Desktop.Desktop_Update($PoolID,$Update)
     }
